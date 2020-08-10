@@ -40,7 +40,7 @@ def _validate_result(cmd: str, cmd_obj: Command, result: str) -> None:
         log('error', cmd_obj.fail_msg)
         raise FailIfResultContains(f'Command output "{result}" contains {if_contains}"')
 
-    if_not_contains = cmd_obj.fail_if_result_contains
+    if_not_contains = cmd_obj.fail_if_result_not_contains
     if if_not_contains and if_not_contains.lower() in result.lower():
         log('error', cmd_obj.fail_msg)
         raise FailIfResultNotContains(f'Command output "{result}" does not contain {if_not_contains}"')

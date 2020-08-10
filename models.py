@@ -6,6 +6,7 @@ class Command:
     cmd: str
     fail_if_result_equals: str = None
     fail_if_result_contains: str = None
+    fail_if_result_not_contains: str = None
     fail_if_result_not_equals: str = None
     fail_msg: str = None
     success_msg: str = None
