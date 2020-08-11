@@ -1,17 +1,17 @@
 import subprocess
 from typing import Tuple, Any
-from exceptions import (
+from shell.exceptions import (
     CommandException,
-    FailIfResultContains,
-    FailIfResultEquals,
-    FailIfResultNotEquals,
-    FailIfResultNotContains
+    ResultDoesNotContainException,
+    ResultNotEqualException,
+    ResultEqualException,
+    ResultContainException
 )
-from models import Command
-from logger import log
+from shell.models import Command
+from shell.logger import log
 
 
-def _execute(command: str, timeout: int = 5) -> Tuple[Any, int]:
+def _execute(command: str, timeout: int = 5) -> Tuple[str, int]:
     log('info', f'Executing command: {command}')
     proc = subprocess.Popen(command, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
     result, error = proc.communicate(timeout=timeout)
@@ -21,6 +21,7 @@ def _execute(command: str, timeout: int = 5) -> Tuple[Any, int]:
     if return_code != 0:
         error = error.decode("utf - 8")
         log('error', f'Command "{command}" failed: {error}')
+        # Need to customize exception cases
         raise CommandException(f'Command "{command}" failed. Exit code={return_code}, result={result}')
 
     result = result.decode('utf-8').strip()
@@ -28,29 +29,29 @@ def _execute(command: str, timeout: int = 5) -> Tuple[Any, int]:
     return result, proc.returncode
 
 
-def _validate_result(cmd: str, cmd_obj: Command, result: str) -> None:
+def _validate_result(cmd_obj: Command, result: str) -> None:
     """Raises exception if conditions fail"""
-    if_not_equal = cmd_obj.fail_if_result_not_equals
+    if_not_equal = cmd_obj.result_not_equal
     if if_not_equal and if_not_equal.lower() != result.lower():
         log('error', cmd_obj.fail_msg)
-        raise FailIfResultNotEquals(f'Command output "{result}" matches {if_not_equal}"')
+        raise ResultEqualException(f'Command output "{result}" matches {if_not_equal}"')
 
-    if_contains = cmd_obj.fail_if_result_contains
+    if_contains = cmd_obj.result_contain
     if if_contains and if_contains.lower() in result.lower():
         log('error', cmd_obj.fail_msg)
-        raise FailIfResultContains(f'Command output "{result}" contains {if_contains}"')
+        raise ResultDoesNotContainException(f'Command output "{result}" contains {if_contains}"')
 
-    if_not_contains = cmd_obj.fail_if_result_not_contains
-    if if_not_contains and if_not_contains.lower() in result.lower():
+    if_not_contains = cmd_obj.result_not_contain
+    if if_not_contains and if_not_contains.lower() not in result.lower():
         log('error', cmd_obj.fail_msg)
-        raise FailIfResultNotContains(f'Command output "{result}" does not contain {if_not_contains}"')
+        raise ResultContainException(f'Command output "{result}" contains {if_not_contains}"')
 
-    if_equal = cmd_obj.fail_if_result_equals
+    if_equal = cmd_obj.result_equal
     if if_equal and result == if_equal:
         log('error', cmd_obj.fail_msg)
-        raise FailIfResultEquals(f'Command output "{result}" does not match "{if_equal}"')
+        raise ResultNotEqualException(f'Command output "{result}" does not match "{if_equal}"')
 
-    log('info', cmd_obj.success_msg)
+    log('info', cmd_obj.pass_msg)
 
 
 def run(cmd_obj: Command, cmd_config: dict) -> Tuple[str, int]:
@@ -59,11 +60,11 @@ def run(cmd_obj: Command, cmd_config: dict) -> Tuple[str, int]:
     result, return_code = _execute(cmd)
 
     # Verify if commands fulfill conditions
-    _validate_result(cmd, cmd_obj, result)
+    _validate_result(cmd_obj, result)
 
     # Recursive function
-    if cmd_obj.send_result_execute:
-        new_cmd_obj = Command(**cmd_config[cmd_obj.send_result_execute])  # needs config
+    if cmd_obj.redirect_result:
+        new_cmd_obj = Command(**cmd_config[cmd_obj.redirect_result])  # needs config
         new_cmd_obj.cmd = new_cmd_obj.cmd.replace('<COMMAND OUTPUT>', result)
         return run(new_cmd_obj, cmd_config=cmd_config)
 

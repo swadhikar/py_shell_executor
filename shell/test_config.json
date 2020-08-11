@@ -1,0 +1,49 @@
+{
+  "cmd_1": {
+    "cmd": "ps -ef | grep ssh-agent | grep -v '/usr/bin/ps' | awk 'NR==1{ print $2 }'",
+    "result_equal": "",
+    "fail_msg": "SSH agent is not running in this machine!",
+    "pass_msg": "SSH agent is started and running in this machine!"
+  },
+  "cmd_2": {
+    "cmd": "cmdswadhi -ltr",
+    "result_equal": ""
+  },
+  "cmd_3": {
+    "cmd": "ps -ef | grep ssh-agent | grep -v '/usr/bin/ps' | awk 'NR==1{ print $2 }'",
+    "result_equal": "",
+    "redirect_result": "cmd_4"
+  },
+  "cmd_4": {
+    "cmd": "ps -ef | grep <COMMAND OUTPUT>",
+    "result_equal": "",
+    "fail_msg": "Unable to find SSH agent running in this PC!",
+    "pass_msg": "SSH agent is started and running in this machine!",
+    "redirect_result": "cmd_5"
+  },
+  "cmd_5": {
+    "cmd": "echo <COMMAND OUTPUT>  | wc -l",
+    "result_not_equal": "1",
+    "pass_msg": "Found exactly one ssh-agent process successfully!",
+    "fail_msg": "Failed to find at least one ssh-agent process in this PC"
+  },
+  "cmd_6": {
+    "cmd": "ps -ef | grep ssh-agent | grep -v '/usr/bin/ps' | awk 'NR==1{ print $2 }'",
+    "result_equal": "",
+    "redirect_result": "cmd_7",
+    "pass_msg": "Found exactly one ssh-agent process successfully!"
+  },
+  "cmd_7": {
+    "cmd": "ps -ef | grep <COMMAND OUTPUT>",
+    "result_equal": "",
+    "fail_msg": "Unable to find SSH agent running in this PC!",
+    "redirect_result": "cmd_8",
+    "pass_msg": "Successfully grepped"
+  },
+  "cmd_8": {
+    "cmd": "echo <COMMAND OUTPUT>  | wc -l",
+    "result_not_equal": "2",
+    "pass_msg": "Found exactly one ssh-agent process successfully!",
+    "fail_msg": "Only one ssh-agent process detected as expected"
+  }
+}

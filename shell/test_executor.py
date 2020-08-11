@@ -1,62 +1,62 @@
 import unittest
 
-from exceptions import *
-from models import Command
-from logger import log
-import commands
+from shell.exceptions import *
+from shell.models import Command
+from shell.logger import log
+from shell import commands
 
 cmd_1 = {
     "cmd": "ps -ef | grep ssh-agent | grep -v '/usr/bin/ps' | awk 'NR==1{ print $2 }'",
-    "fail_if_result_equals": "",
+    "result_equal": "",
     "fail_msg": "SSH agent is not running in this machine!",
-    "success_msg": "SSH agent is started and running in this machine!",
+    "pass_msg": "SSH agent is started and running in this machine!",
 }
 
 cmd_2 = {
     "cmd": "cmdswadhi -ltr",
-    "fail_if_result_equals": ""
+    "result_equal": ""
 }
 
 cmd_3 = {
     "cmd": "ps -ef | grep ssh-agent | grep -v '/usr/bin/ps' | awk 'NR==1{ print $2 }'",
-    "fail_if_result_equals": "",
-    "send_result_execute": "cmd_4"
+    "result_equal": "",
+    "redirect_result": "cmd_4"
 }
 
 cmd_4 = {
     "cmd": "ps -ef | grep <COMMAND OUTPUT>",
-    "fail_if_result_equals": "",
+    "result_equal": "",
     "fail_msg": "Unable to find SSH agent running in this PC!",
-    "success_msg": "SSH agent is started and running in this machine!",
-    "send_result_execute": "cmd_5"
+    "pass_msg": "SSH agent is started and running in this machine!",
+    "redirect_result": "cmd_5"
 }
 
 cmd_5 = {
     "cmd": "echo <COMMAND OUTPUT>  | wc -l",
-    "fail_if_result_not_equals": "1",
-    "success_msg": "Found exactly one ssh-agent process successfully!",
+    "result_not_equal": "1",
+    "pass_msg": "Found exactly one ssh-agent process successfully!",
     "fail_msg": "Failed to find at least one ssh-agent process in this PC",
 }
 
 cmd_6 = {
     "cmd": "ps -ef | grep ssh-agent | grep -v '/usr/bin/ps' | awk 'NR==1{ print $2 }'",
-    "fail_if_result_equals": "",
-    "send_result_execute": "cmd_7",
-    "success_msg": "Found exactly one ssh-agent process successfully!"
+    "result_equal": "",
+    "redirect_result": "cmd_7",
+    "pass_msg": "Found exactly one ssh-agent process successfully!"
 }
 
 cmd_7 = {
     "cmd": "ps -ef | grep <COMMAND OUTPUT>",
-    "fail_if_result_equals": "",
+    "result_equal": "",
     "fail_msg": "Unable to find SSH agent running in this PC!",
-    "send_result_execute": "cmd_8",
-    "success_msg": "Successfully grepped",
+    "redirect_result": "cmd_8",
+    "pass_msg": "Successfully grepped",
 }
 
 cmd_8 = {
     "cmd": "echo <COMMAND OUTPUT>  | wc -l",
-    "fail_if_result_not_equals": "2",
-    "success_msg": "Found exactly one ssh-agent process successfully!",
+    "result_not_equal": "2",
+    "pass_msg": "Found exactly one ssh-agent process successfully!",
     "fail_msg": "Only one ssh-agent process detected as expected",
 }
 
@@ -94,10 +94,10 @@ class TestShellExecutor(unittest.TestCase):
         command_6 = Command(**cmd_6)
         try:
             commands.run(command_6, cmd_config=cmd_config)
-        except FailIfResultNotEquals:
+        except ResultEqualException:
             pass
         else:
-            raise Exception('FailIfResultNotEquals is not raised!')
+            raise Exception('ResultEqualException is not raised!')
 
 
 if __name__ == '__main__':
