@@ -1,0 +1,10 @@
+Ticket,Team,Raised,Severity,Cause,Status
+INC1012101,TeamA,12-Aug-2020 01:00:00,major,server unreachable. Unable to transfer files. Ping test passed.,closed
+INC2113432,TeamB,13-Aug-2020 06:00:00,minor,/tmp/ space filled,started
+INC2321232,TeamC,11-Aug-2020 03:00:00,major,server unreachable,closed
+INC2334222,TeamD,10-Aug-2020 02:00:00,minor,/tmp/ space filled,started
+INC2432323,TeamE,11-Aug-2020 05:00:00,major,server unreachable,closed
+INC2533253,TeamF,13-Aug-2020 06:00:00,minor,/tmp/ space filled,started
+INC2324432,TeamG,13-Aug-2020 06:00:00,minor,/tmp/ space filled,started
+INC2323239,TeamH,13-Aug-2020 06:00:00,minor,/tmp/ space filled. Unable to transfer files. Ping test passed.,started
+INC2329231,TeamI,13-Aug-2020 06:00:00,minor,/tmp/ space filled,started
