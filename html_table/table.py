@@ -7,4 +7,9 @@ df.set_index('Ticket', inplace=True)
 df.index.name = None
 print(df.head(3))
 
-write_html(df.to_html(classes=['table', 'table-hover', 'table-dark', 'table-striped']))
+write_html(df.to_html(
+    classes=['table table-hover table-dark table-striped'],
+    border=2,
+    justify='center'
+    )
+)
